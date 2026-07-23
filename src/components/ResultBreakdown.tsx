@@ -85,6 +85,8 @@ export function ResultBreakdown({ result }: Props) {
                 value={socialSecurity.vocationalTraining}
               />
               <Detail label="MEI" value={socialSecurity.mei} />
+              <Detail label="IRPF estatal" value={incomeTax.stateTax} />
+              <Detail label="IRPF autonómico" value={incomeTax.regionalTax} />
               <Detail
                 label="Mínimo personal y familiar"
                 value={incomeTax.personalAndFamilyMinimum}

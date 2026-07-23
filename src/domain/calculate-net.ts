@@ -33,6 +33,7 @@ export function calculateNet(input: SalaryInput): Result {
     grossAnnual,
     socialSecurity.total,
     personalAndFamilyMinimum,
+    input.region,
     parameters,
   );
 

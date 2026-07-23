@@ -7,6 +7,7 @@ const base: SalaryInput = {
   payments: 14,
   contractType: "permanent",
   year: 2025,
+  region: "general",
   personal: {
     age: 30,
     disability: "none",
@@ -27,6 +28,13 @@ describe("calculateNet", () => {
     // Income tax: annual withholding via the two-quota method.
     expect(r.incomeTax.annualWithholding).toBeCloseTo(4927.8, 1);
     expect(r.incomeTax.withholdingRate).toBeCloseTo(0.16426, 4);
+
+    // The general reference scale splits into equal state and regional halves.
+    expect(r.incomeTax.stateTax + r.incomeTax.regionalTax).toBeCloseTo(
+      r.incomeTax.taxDue,
+      6,
+    );
+    expect(r.incomeTax.stateTax).toBeCloseTo(r.incomeTax.regionalTax, 6);
 
     // Net.
     expect(r.netAnnual).toBeCloseTo(23128.2, 1);

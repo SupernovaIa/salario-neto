@@ -32,15 +32,19 @@ export function earnedIncomeReduction(
  *
  * `socialSecurity` is the employee's annual contribution, a deductible expense
  * of earned income. `personalAndFamilyMinimum` is the amount taxed at 0%,
- * computed from the taxpayer's circumstances.
+ * computed from the taxpayer's circumstances. The total tax is the state half
+ * plus the regional half of the chosen community.
  */
 export function calculateIncomeTax(
   grossAnnual: number,
   socialSecurity: number,
   personalAndFamilyMinimum: number,
+  region: string,
   parameters: TaxParameters,
 ): IncomeTaxBreakdown {
-  const { incomeTaxScale, deductibleExpenses } = parameters;
+  const { stateScale, regionalScales, deductibleExpenses } = parameters;
+  // Fall back to the general reference scale if the region is unknown.
+  const regionalScale = regionalScales[region] ?? regionalScales.general;
 
   // Net income before reduction = income - deductible expenses - contributions.
   const netIncomeBeforeReduction = Math.max(
@@ -55,14 +59,18 @@ export function calculateIncomeTax(
 
   const taxableBase = Math.max(0, netIncomeBeforeReduction - reduction);
 
-  // Two-quota method: the personal and family minimum does not shrink the base,
-  // it subtracts the quota that would correspond to its bracket.
-  const baseQuota = applyScale(taxableBase, incomeTaxScale);
-  const minimumQuota = applyScale(
-    Math.min(taxableBase, personalAndFamilyMinimum),
-    incomeTaxScale,
-  );
-  const taxDue = Math.max(0, baseQuota - minimumQuota);
+  // Two-quota method, applied to each scale: the personal and family minimum
+  // does not shrink the base, it subtracts the quota of its own bracket.
+  const cappedMinimum = Math.min(taxableBase, personalAndFamilyMinimum);
+  const quota = (scale: typeof stateScale) =>
+    Math.max(
+      0,
+      applyScale(taxableBase, scale) - applyScale(cappedMinimum, scale),
+    );
+
+  const stateTax = quota(stateScale);
+  const regionalTax = quota(regionalScale);
+  const taxDue = stateTax + regionalTax;
 
   const withholdingRate = grossAnnual > 0 ? taxDue / grossAnnual : 0;
 
@@ -71,6 +79,8 @@ export function calculateIncomeTax(
     earnedIncomeReduction: reduction,
     taxableBase,
     personalAndFamilyMinimum,
+    stateTax,
+    regionalTax,
     taxDue,
     withholdingRate,
     annualWithholding: taxDue,

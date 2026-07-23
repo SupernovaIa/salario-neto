@@ -25,7 +25,8 @@ npm run build   # production build
 
 ## Scope
 
-Approximation using the general IRPF scale. Covers personal circumstances
-(children, age, disability) via the personal and family minimum, but not yet the
-regional scale or the tax agency's exact withholding adjustments. Estimates, not
-a payslip.
+Approximation. Applies the state IRPF scale plus the regional scale of the 15
+common-regime communities (AEAT 2025 data) and covers personal circumstances
+(children, age, disability) via the personal and family minimum. Does not cover
+País Vasco / Navarra (foral regime) or the tax agency's exact withholding
+adjustments. Estimates, not a payslip.

@@ -39,6 +39,8 @@ export interface SalaryInput {
   contractType: ContractType;
   /** Tax year whose parameters apply. */
   year: number;
+  /** Autonomous community id, whose regional scale applies. */
+  region: string;
   /** Personal and family circumstances. */
   personal: PersonalCircumstances;
 }
@@ -83,8 +85,10 @@ export interface TaxParameters {
   /** Annual maximum contribution base (upper cap). */
   maxContributionBaseAnnual: number;
   contribution: ContributionRates;
-  /** General income-tax scale (state + reference regional). */
-  incomeTaxScale: Bracket[];
+  /** State income-tax scale (escala general estatal), same for everyone. */
+  stateScale: Bracket[];
+  /** Regional income-tax scales by community id (escala autonómica). */
+  regionalScales: Record<string, Bracket[]>;
   /** Components of the personal and family minimum (art. 57-61 LIRPF). */
   familyMinimum: FamilyMinimumParameters;
   /** Deductible "other expenses" from earned income (art. 19.2.f LIRPF). */
@@ -115,6 +119,10 @@ export interface IncomeTaxBreakdown {
   taxableBase: number;
   /** Personal and family minimum applied (taxed at 0% via the second quota). */
   personalAndFamilyMinimum: number;
+  /** State half of the tax due. */
+  stateTax: number;
+  /** Regional half of the tax due. */
+  regionalTax: number;
   taxDue: number;
   /** Resulting withholding rate (proportion of gross). */
   withholdingRate: number;
