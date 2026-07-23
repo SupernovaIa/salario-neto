@@ -86,6 +86,10 @@ export function ResultBreakdown({ result }: Props) {
               />
               <Detail label="MEI" value={socialSecurity.mei} />
               <Detail
+                label="Mínimo personal y familiar"
+                value={incomeTax.personalAndFamilyMinimum}
+              />
+              <Detail
                 label="Base liquidable IRPF"
                 value={incomeTax.taxableBase}
               />

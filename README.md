@@ -25,6 +25,7 @@ npm run build   # production build
 
 ## Scope
 
-Approximation using the general IRPF scale. Does not cover regional scales or
-personal circumstances (children, family situation, disability). Estimates, not
+Approximation using the general IRPF scale. Covers personal circumstances
+(children, age, disability) via the personal and family minimum, but not yet the
+regional scale or the tax agency's exact withholding adjustments. Estimates, not
 a payslip.

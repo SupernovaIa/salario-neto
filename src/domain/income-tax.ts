@@ -31,14 +31,16 @@ export function earnedIncomeReduction(
  * the allowance is effectively taxed at 0% while progressivity is preserved).
  *
  * `socialSecurity` is the employee's annual contribution, a deductible expense
- * of earned income.
+ * of earned income. `personalAndFamilyMinimum` is the amount taxed at 0%,
+ * computed from the taxpayer's circumstances.
  */
 export function calculateIncomeTax(
   grossAnnual: number,
   socialSecurity: number,
+  personalAndFamilyMinimum: number,
   parameters: TaxParameters,
 ): IncomeTaxBreakdown {
-  const { incomeTaxScale, personalAllowance, deductibleExpenses } = parameters;
+  const { incomeTaxScale, deductibleExpenses } = parameters;
 
   // Net income before reduction = income - deductible expenses - contributions.
   const netIncomeBeforeReduction = Math.max(
@@ -53,14 +55,14 @@ export function calculateIncomeTax(
 
   const taxableBase = Math.max(0, netIncomeBeforeReduction - reduction);
 
-  // Two-quota method: the personal allowance does not shrink the base, it
-  // subtracts the quota that would correspond to its bracket.
+  // Two-quota method: the personal and family minimum does not shrink the base,
+  // it subtracts the quota that would correspond to its bracket.
   const baseQuota = applyScale(taxableBase, incomeTaxScale);
-  const allowanceQuota = applyScale(
-    Math.min(taxableBase, personalAllowance),
+  const minimumQuota = applyScale(
+    Math.min(taxableBase, personalAndFamilyMinimum),
     incomeTaxScale,
   );
-  const taxDue = Math.max(0, baseQuota - allowanceQuota);
+  const taxDue = Math.max(0, baseQuota - minimumQuota);
 
   const withholdingRate = grossAnnual > 0 ? taxDue / grossAnnual : 0;
 
@@ -68,6 +70,7 @@ export function calculateIncomeTax(
     netIncomeBeforeReduction,
     earnedIncomeReduction: reduction,
     taxableBase,
+    personalAndFamilyMinimum,
     taxDue,
     withholdingRate,
     annualWithholding: taxDue,

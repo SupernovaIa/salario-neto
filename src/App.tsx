@@ -1,13 +1,20 @@
 import { useMemo, useState } from "react";
 import { SalaryForm } from "./components/SalaryForm";
+import { PersonalForm } from "./components/PersonalForm";
 import { ResultBreakdown } from "./components/ResultBreakdown";
-import { calculateNet, DEFAULT_YEAR, type SalaryInput } from "./domain";
+import {
+  calculateNet,
+  DEFAULT_PERSONAL,
+  DEFAULT_YEAR,
+  type SalaryInput,
+} from "./domain";
 
 const INITIAL_INPUT: SalaryInput = {
   grossAnnual: 30000,
   payments: 14,
   contractType: "permanent",
   year: DEFAULT_YEAR,
+  personal: DEFAULT_PERSONAL,
 };
 
 export function App() {
@@ -28,14 +35,18 @@ export function App() {
         </header>
 
         <SalaryForm input={input} onChange={setInput} />
+        <PersonalForm
+          personal={input.personal}
+          onChange={(personal) => setInput({ ...input, personal })}
+        />
         <ResultBreakdown result={result} />
 
         <footer className="card__footer">
           <p>
-            <strong>Cálculo aproximado.</strong> No contempla mínimos por hijos,
-            situación familiar, discapacidad ni las particularidades de cada
-            comunidad autónoma. Usa la escala general de IRPF y no sustituye a tu
-            nómina real.
+            <strong>Cálculo aproximado.</strong> Usa la escala general de IRPF:
+            aún no aplica la escala autonómica de cada comunidad ni las
+            regularizaciones exactas de la AEAT, así que no sustituye a tu nómina
+            real.
           </p>
         </footer>
       </main>

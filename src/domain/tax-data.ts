@@ -30,7 +30,15 @@ const PARAMETERS_2025: TaxParameters = {
     { upTo: 300000, rate: 0.45 },
     { upTo: null, rate: 0.47 },
   ],
-  personalAllowance: 5550,
+  familyMinimum: {
+    personalBase: 5550,
+    ageOver65: 1150,
+    ageOver75Extra: 1400,
+    disabilityStandard: 3000,
+    disabilitySevere: 9000,
+    descendant: [2400, 2700, 4000, 4500],
+    descendantUnder3Extra: 2800,
+  },
   deductibleExpenses: 2000,
   earnedIncomeReduction: {
     lowerLimit: 14852,

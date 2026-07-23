@@ -7,6 +7,13 @@ const base: SalaryInput = {
   payments: 14,
   contractType: "permanent",
   year: 2025,
+  personal: {
+    age: 30,
+    disability: "none",
+    children: 0,
+    childrenUnder3: 0,
+    sharedCustody: false,
+  },
 };
 
 describe("calculateNet", () => {
@@ -81,5 +88,62 @@ describe("calculateNet", () => {
     const r2026 = calculateNet({ ...base, year: 2026 });
     // The employee MEI share rises from 0.13% to 0.15%.
     expect(r2026.socialSecurity.mei).toBeGreaterThan(r2025.socialSecurity.mei);
+  });
+
+  it("keeps the reference case unchanged with neutral circumstances", () => {
+    // Base personal minimum (5,550) matches the pre-v2 fixed allowance.
+    expect(calculateNet(base).incomeTax.personalAndFamilyMinimum).toBe(5550);
+    expect(calculateNet(base).incomeTax.annualWithholding).toBeCloseTo(4927.8, 1);
+  });
+
+  it("lowers the withholding when there are children", () => {
+    const withKids = calculateNet({
+      ...base,
+      personal: { ...base.personal, children: 2 },
+    });
+    expect(withKids.incomeTax.personalAndFamilyMinimum).toBe(
+      5550 + 2400 + 2700,
+    );
+    expect(withKids.incomeTax.annualWithholding).toBeLessThan(
+      calculateNet(base).incomeTax.annualWithholding,
+    );
+    expect(withKids.netAnnual).toBeGreaterThan(calculateNet(base).netAnnual);
+  });
+
+  it("adds the under-3 extra and halves on shared custody", () => {
+    const full = calculateNet({
+      ...base,
+      personal: { ...base.personal, children: 1, childrenUnder3: 1 },
+    });
+    const shared = calculateNet({
+      ...base,
+      personal: {
+        ...base.personal,
+        children: 1,
+        childrenUnder3: 1,
+        sharedCustody: true,
+      },
+    });
+    // 1st child (2,400) + under-3 extra (2,800) = 5,200 over the base.
+    expect(full.incomeTax.personalAndFamilyMinimum).toBe(5550 + 5200);
+    expect(shared.incomeTax.personalAndFamilyMinimum).toBe(5550 + 5200 / 2);
+  });
+
+  it("raises the minimum with age and disability", () => {
+    const old = calculateNet({
+      ...base,
+      personal: { ...base.personal, age: 76 },
+    });
+    // Base + 65+ (1,150) + 75+ extra (1,400).
+    expect(old.incomeTax.personalAndFamilyMinimum).toBe(5550 + 1150 + 1400);
+
+    const disabled = calculateNet({
+      ...base,
+      personal: { ...base.personal, disability: "severe" },
+    });
+    expect(disabled.incomeTax.personalAndFamilyMinimum).toBe(5550 + 9000);
+    expect(disabled.incomeTax.annualWithholding).toBeLessThan(
+      calculateNet(base).incomeTax.annualWithholding,
+    );
   });
 });

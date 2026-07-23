@@ -183,6 +183,76 @@ input[type="number"] {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
 }
 
+/* ---- Circunstancias personales ---- */
+.personal {
+  margin-bottom: 24px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px 14px;
+}
+
+.personal summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  list-style: none;
+  padding: 10px 0;
+}
+.personal summary::-webkit-details-marker {
+  display: none;
+}
+.personal summary::before {
+  content: "▸ ";
+}
+.personal[open] summary::before {
+  content: "▾ ";
+}
+
+.personal__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  padding: 6px 0 12px;
+}
+
+.personal .field input,
+.personal .field select {
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 11px 12px;
+}
+.personal .field input:focus,
+.personal .field select:focus {
+  border-color: var(--accent);
+}
+.personal .field input:disabled {
+  opacity: 0.45;
+}
+
+.personal__check {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 0.88rem;
+  padding: 4px 0 10px;
+  cursor: pointer;
+}
+.personal__check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+.personal__hint {
+  margin: 0;
+  padding-bottom: 12px;
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
 /* ---- Resultado ---- */
 .result {
   border-top: 1px solid var(--border);
