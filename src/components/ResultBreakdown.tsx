@@ -1,110 +1,101 @@
-import type { Resultado } from "../domain";
-import {
-  formatoEuros,
-  formatoEurosCentimos,
-  formatoPorcentaje,
-} from "../lib/format";
+import type { Result } from "../domain";
+import { formatEuros, formatEurosWithCents, formatPercent } from "../lib/format";
 
 interface Props {
-  resultado: Resultado;
+  result: Result;
 }
 
-export function ResultBreakdown({ resultado }: Props) {
-  const { seguridadSocial, irpf, netoAnual, brutoAnual } = resultado;
+export function ResultBreakdown({ result }: Props) {
+  const { socialSecurity, incomeTax, netAnnual, grossAnnual } = result;
 
-  // Proporciones para la barra de reparto del bruto.
-  const pctSS = brutoAnual > 0 ? seguridadSocial.total / brutoAnual : 0;
-  const pctIRPF = brutoAnual > 0 ? irpf.retencionAnual / brutoAnual : 0;
-  const pctNeto = brutoAnual > 0 ? netoAnual / brutoAnual : 0;
+  // Proportions for the gross-split bar.
+  const netPct = grossAnnual > 0 ? netAnnual / grossAnnual : 0;
+  const ssPct = grossAnnual > 0 ? socialSecurity.total / grossAnnual : 0;
+  const taxPct = grossAnnual > 0 ? incomeTax.annualWithholding / grossAnnual : 0;
 
   return (
     <section className="result" aria-live="polite">
       <div className="result__hero">
         <span className="result__hero-label">Neto mensual</span>
         <span className="result__hero-value">
-          {formatoEurosCentimos(resultado.netoMensual)}
+          {formatEurosWithCents(result.netMonthly)}
         </span>
         <span className="result__hero-sub">
-          {formatoEuros(netoAnual)} netos al año ·{" "}
-          {resultado.brutoMensual > 0 &&
-            `${formatoEuros(resultado.brutoMensual)} brutos/mes`}
+          {formatEuros(netAnnual)} netos al año ·{" "}
+          {result.grossMonthly > 0 &&
+            `${formatEuros(result.grossMonthly)} brutos/mes`}
         </span>
       </div>
 
-      {brutoAnual > 0 && (
+      {grossAnnual > 0 && (
         <>
           <div
             className="split-bar"
             role="img"
-            aria-label={`Reparto del bruto: ${formatoPorcentaje(
-              pctNeto,
-            )} neto, ${formatoPorcentaje(pctSS)} Seguridad Social, ${formatoPorcentaje(
-              pctIRPF,
+            aria-label={`Reparto del bruto: ${formatPercent(
+              netPct,
+            )} neto, ${formatPercent(ssPct)} Seguridad Social, ${formatPercent(
+              taxPct,
             )} IRPF`}
           >
             <span
-              className="split-bar__seg split-bar__seg--neto"
-              style={{ width: `${pctNeto * 100}%` }}
+              className="split-bar__seg split-bar__seg--net"
+              style={{ width: `${netPct * 100}%` }}
             />
             <span
               className="split-bar__seg split-bar__seg--ss"
-              style={{ width: `${pctSS * 100}%` }}
+              style={{ width: `${ssPct * 100}%` }}
             />
             <span
-              className="split-bar__seg split-bar__seg--irpf"
-              style={{ width: `${pctIRPF * 100}%` }}
+              className="split-bar__seg split-bar__seg--tax"
+              style={{ width: `${taxPct * 100}%` }}
             />
           </div>
 
           <dl className="breakdown">
-            <Row
-              swatch="neto"
-              label="Neto"
-              valor={netoAnual}
-              pct={pctNeto}
-            />
+            <Row swatch="net" label="Neto" value={netAnnual} pct={netPct} />
             <Row
               swatch="ss"
               label="Seguridad Social"
-              valor={seguridadSocial.total}
-              pct={pctSS}
+              value={socialSecurity.total}
+              pct={ssPct}
             />
             <Row
-              swatch="irpf"
+              swatch="tax"
               label="Retención IRPF"
-              valor={irpf.retencionAnual}
-              pct={pctIRPF}
+              value={incomeTax.annualWithholding}
+              pct={taxPct}
             />
           </dl>
 
-          <details className="detalle">
+          <details className="detail">
             <summary>Ver desglose completo</summary>
-            <dl className="detalle__grid">
-              <Detalle
+            <dl className="detail__grid">
+              <Detail
                 label="Base de cotización"
-                valor={seguridadSocial.baseCotizacion}
+                value={socialSecurity.contributionBase}
               />
-              <Detalle
+              <Detail
                 label="Contingencias comunes"
-                valor={seguridadSocial.contingenciasComunes}
+                value={socialSecurity.commonContingencies}
               />
-              <Detalle label="Desempleo" valor={seguridadSocial.desempleo} />
-              <Detalle
+              <Detail label="Desempleo" value={socialSecurity.unemployment} />
+              <Detail
                 label="Formación profesional"
-                valor={seguridadSocial.formacionProfesional}
+                value={socialSecurity.vocationalTraining}
               />
-              <Detalle label="MEI" valor={seguridadSocial.mei} />
-              <Detalle
+              <Detail label="MEI" value={socialSecurity.mei} />
+              <Detail
                 label="Base liquidable IRPF"
-                valor={irpf.baseLiquidable}
+                value={incomeTax.taxableBase}
               />
-              <Detalle
+              <Detail
                 label="Tipo de retención"
-                valor={formatoPorcentaje(irpf.tipoRetencion)}
+                value={formatPercent(incomeTax.withholdingRate)}
               />
-              <Detalle
+              <Detail
                 label="Tipo neto efectivo"
-                valor={formatoPorcentaje(resultado.tipoNetoEfectivo)}
+                value={formatPercent(result.effectiveNetRate)}
               />
             </dl>
           </details>
@@ -117,12 +108,12 @@ export function ResultBreakdown({ resultado }: Props) {
 function Row({
   swatch,
   label,
-  valor,
+  value,
   pct,
 }: {
   swatch: string;
   label: string;
-  valor: number;
+  value: number;
   pct: number;
 }) {
   return (
@@ -132,18 +123,18 @@ function Row({
         {label}
       </dt>
       <dd>
-        <strong>{formatoEuros(valor)}</strong>
-        <span className="breakdown__pct">{formatoPorcentaje(pct)}</span>
+        <strong>{formatEuros(value)}</strong>
+        <span className="breakdown__pct">{formatPercent(pct)}</span>
       </dd>
     </div>
   );
 }
 
-function Detalle({ label, valor }: { label: string; valor: number | string }) {
+function Detail({ label, value }: { label: string; value: number | string }) {
   return (
-    <div className="detalle__item">
+    <div className="detail__item">
       <dt>{label}</dt>
-      <dd>{typeof valor === "number" ? formatoEuros(valor) : valor}</dd>
+      <dd>{typeof value === "number" ? formatEuros(value) : value}</dd>
     </div>
   );
 }

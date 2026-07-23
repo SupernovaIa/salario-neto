@@ -1,54 +1,30 @@
-# Salario neto
+# salario-neto
 
-Calculadora de salario **bruto → neto** para España. Introduces el bruto anual
-y te dice el neto mensual, con el desglose de Seguridad Social e IRPF.
+Gross → net salary calculator for Spain. Enter your annual gross and get the
+monthly net, with a Social Security and income-tax (IRPF) breakdown.
 
-Solo frontend: todo el cálculo corre en el navegador, sin backend.
+Frontend-only: the whole calculation runs in the browser.
 
 ## Stack
 
-- **React + TypeScript + Vite**
-- **Vitest** para los tests del motor de cálculo
+React · TypeScript · Vite · Vitest
 
-## Arquitectura
+## Structure
 
-El cálculo está aislado de la interfaz en `src/domain/`, como funciones puras y
-testeables:
+The calculation engine lives in `src/domain/` as pure, tested functions,
+separate from the UI. Tax parameters are versioned by year in `tax-data.ts`.
 
-```
-src/
-  domain/
-    types.ts           Tipos del dominio
-    tax-data.ts        Parámetros fiscales versionados por año (tramos, tipos SS)
-    scale.ts           Escala progresiva por tramos
-    social-security.ts Cotización del trabajador
-    irpf.ts            Retención de IRPF (método de las dos cuotas)
-    calculate-net.ts   Orquestador: entrada → resultado
-    __tests__/         Tests con casos de referencia
-  components/          UI
-  lib/format.ts        Formateo de euros y porcentajes
-```
-
-Actualizar de un año a otro es añadir una entrada en `tax-data.ts`; la lógica no
-cambia.
-
-## Uso
+## Commands
 
 ```bash
 npm install
-npm run dev        # desarrollo
-npm test           # tests del motor
-npm run build      # build de producción
+npm run dev     # dev server
+npm test        # engine tests
+npm run build   # production build
 ```
 
-## Alcance
+## Scope
 
-Es un **cálculo aproximado**. Usa la escala general de IRPF y no contempla
-mínimos por hijos, situación familiar, discapacidad ni la escala autonómica.
-Sirve para estimar, no para cuadrar la nómina al céntimo.
-
-### Siguientes pasos
-
-- [ ] Escala de IRPF por comunidad autónoma
-- [ ] Circunstancias personales (hijos, situación familiar, edad, discapacidad)
-- [ ] Acercarse al algoritmo de retención exacto de la AEAT
+Approximation using the general IRPF scale. Does not cover regional scales or
+personal circumstances (children, family situation, disability). Estimates, not
+a payslip.

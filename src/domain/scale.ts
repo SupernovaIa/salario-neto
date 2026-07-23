@@ -1,25 +1,25 @@
-import type { Tramo } from "./types";
+import type { Bracket } from "./types";
 
 /**
- * Aplica una escala progresiva por tramos a una base.
+ * Applies a progressive bracket scale to a base amount.
  *
- * Cada tramo tributa solo por la parte de la base que cae dentro de él, no por
- * el total (progresividad real). Devuelve la cuota total.
+ * Each bracket is taxed only on the portion of the base that falls within it,
+ * not on the whole amount (true progressivity). Returns the total due.
  */
-export function aplicarEscala(base: number, escala: Tramo[]): number {
+export function applyScale(base: number, scale: Bracket[]): number {
   if (base <= 0) return 0;
 
-  let cuota = 0;
-  let limiteInferior = 0;
+  let due = 0;
+  let lowerBound = 0;
 
-  for (const tramo of escala) {
-    const limiteSuperior = tramo.hasta ?? Infinity;
-    if (base <= limiteInferior) break;
+  for (const bracket of scale) {
+    const upperBound = bracket.upTo ?? Infinity;
+    if (base <= lowerBound) break;
 
-    const baseEnTramo = Math.min(base, limiteSuperior) - limiteInferior;
-    cuota += baseEnTramo * tramo.tipo;
-    limiteInferior = limiteSuperior;
+    const amountInBracket = Math.min(base, upperBound) - lowerBound;
+    due += amountInBracket * bracket.rate;
+    lowerBound = upperBound;
   }
 
-  return cuota;
+  return due;
 }

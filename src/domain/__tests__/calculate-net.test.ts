@@ -1,84 +1,85 @@
 import { describe, expect, it } from "vitest";
-import { calcularNeto } from "../calculate-net";
-import type { DatosEntrada } from "../types";
+import { calculateNet } from "../calculate-net";
+import type { SalaryInput } from "../types";
 
-const base: DatosEntrada = {
-  brutoAnual: 30000,
-  numPagas: 14,
-  tipoContrato: "indefinido",
-  anio: 2025,
+const base: SalaryInput = {
+  grossAnnual: 30000,
+  payments: 14,
+  contractType: "permanent",
+  year: 2025,
 };
 
-describe("calcularNeto", () => {
-  it("calcula un caso de referencia (30.000 €, indefinido, 2025)", () => {
-    const r = calcularNeto(base);
+describe("calculateNet", () => {
+  it("computes a reference case (€30,000, permanent, 2025)", () => {
+    const r = calculateNet(base);
 
-    // Seguridad Social: 6,48 % de 30.000 = 1.944 €.
-    expect(r.seguridadSocial.total).toBeCloseTo(1944, 2);
-    expect(r.seguridadSocial.baseCotizacion).toBe(30000);
+    // Social security: 6.48% of 30,000 = 1,944.
+    expect(r.socialSecurity.total).toBeCloseTo(1944, 2);
+    expect(r.socialSecurity.contributionBase).toBe(30000);
 
-    // IRPF: retención anual calculada por el método de las dos cuotas.
-    expect(r.irpf.retencionAnual).toBeCloseTo(4927.8, 1);
-    expect(r.irpf.tipoRetencion).toBeCloseTo(0.16426, 4);
+    // Income tax: annual withholding via the two-quota method.
+    expect(r.incomeTax.annualWithholding).toBeCloseTo(4927.8, 1);
+    expect(r.incomeTax.withholdingRate).toBeCloseTo(0.16426, 4);
 
-    // Neto.
-    expect(r.netoAnual).toBeCloseTo(23128.2, 1);
-    expect(r.netoMensual).toBeCloseTo(1652.01, 1);
-    expect(r.tipoNetoEfectivo).toBeCloseTo(0.7709, 3);
+    // Net.
+    expect(r.netAnnual).toBeCloseTo(23128.2, 1);
+    expect(r.netMonthly).toBeCloseTo(1652.01, 1);
+    expect(r.effectiveNetRate).toBeCloseTo(0.7709, 3);
   });
 
-  it("reparte el mismo neto anual entre 12 o 14 pagas", () => {
-    const con14 = calcularNeto({ ...base, numPagas: 14 });
-    const con12 = calcularNeto({ ...base, numPagas: 12 });
+  it("splits the same net annual amount across 12 or 14 payments", () => {
+    const with14 = calculateNet({ ...base, payments: 14 });
+    const with12 = calculateNet({ ...base, payments: 12 });
 
-    expect(con14.netoAnual).toBeCloseTo(con12.netoAnual, 6);
-    expect(con12.netoMensual).toBeGreaterThan(con14.netoMensual);
-    expect(con14.netoMensual * 14).toBeCloseTo(con14.netoAnual, 6);
-    expect(con12.netoMensual * 12).toBeCloseTo(con12.netoAnual, 6);
+    expect(with14.netAnnual).toBeCloseTo(with12.netAnnual, 6);
+    expect(with12.netMonthly).toBeGreaterThan(with14.netMonthly);
+    expect(with14.netMonthly * 14).toBeCloseTo(with14.netAnnual, 6);
+    expect(with12.netMonthly * 12).toBeCloseTo(with12.netAnnual, 6);
   });
 
-  it("topa la base de cotización en la base máxima", () => {
-    const r = calcularNeto({ ...base, brutoAnual: 80000 });
-    expect(r.seguridadSocial.baseCotizacion).toBeCloseTo(58914, 2);
-    // Aunque el bruto sube, la cotización se topa.
-    expect(r.seguridadSocial.total).toBeCloseTo(58914 * 0.0648, 2);
+  it("caps the contribution base at the maximum base", () => {
+    const r = calculateNet({ ...base, grossAnnual: 80000 });
+    expect(r.socialSecurity.contributionBase).toBeCloseTo(58914, 2);
+    // Even though gross rises, the contribution is capped.
+    expect(r.socialSecurity.total).toBeCloseTo(58914 * 0.0648, 2);
   });
 
-  it("aplica un desempleo más caro en contrato temporal", () => {
-    const indefinido = calcularNeto(base);
-    const temporal = calcularNeto({ ...base, tipoContrato: "temporal" });
-    expect(temporal.seguridadSocial.desempleo).toBeGreaterThan(
-      indefinido.seguridadSocial.desempleo,
+  it("applies a more expensive unemployment rate on temporary contracts", () => {
+    const permanent = calculateNet(base);
+    const temporary = calculateNet({ ...base, contractType: "temporary" });
+    expect(temporary.socialSecurity.unemployment).toBeGreaterThan(
+      permanent.socialSecurity.unemployment,
     );
   });
 
-  it("no aplica IRPF a rentas bajas (reducción por trabajo plena)", () => {
-    const r = calcularNeto({ ...base, brutoAnual: 15000 });
-    expect(r.irpf.retencionAnual).toBeCloseTo(0, 2);
-    expect(r.netoAnual).toBeCloseTo(15000 - 972, 2);
+  it("applies no income tax to low incomes (full earned-income reduction)", () => {
+    const r = calculateNet({ ...base, grossAnnual: 15000 });
+    expect(r.incomeTax.annualWithholding).toBeCloseTo(0, 2);
+    expect(r.netAnnual).toBeCloseTo(15000 - 972, 2);
   });
 
-  it("la retención crece con el bruto (progresividad)", () => {
-    const tipos = [20000, 40000, 80000].map(
-      (brutoAnual) => calcularNeto({ ...base, brutoAnual }).irpf.tipoRetencion,
+  it("increases withholding with gross (progressivity)", () => {
+    const rates = [20000, 40000, 80000].map(
+      (grossAnnual) =>
+        calculateNet({ ...base, grossAnnual }).incomeTax.withholdingRate,
     );
-    expect(tipos[0]).toBeLessThan(tipos[1]);
-    expect(tipos[1]).toBeLessThan(tipos[2]);
+    expect(rates[0]).toBeLessThan(rates[1]);
+    expect(rates[1]).toBeLessThan(rates[2]);
   });
 
-  it("es robusto ante entradas cero o negativas", () => {
-    const cero = calcularNeto({ ...base, brutoAnual: 0 });
-    expect(cero.netoAnual).toBe(0);
-    expect(cero.tipoNetoEfectivo).toBe(0);
+  it("is robust against zero or negative inputs", () => {
+    const zero = calculateNet({ ...base, grossAnnual: 0 });
+    expect(zero.netAnnual).toBe(0);
+    expect(zero.effectiveNetRate).toBe(0);
 
-    const negativo = calcularNeto({ ...base, brutoAnual: -5000 });
-    expect(negativo.netoAnual).toBe(0);
+    const negative = calculateNet({ ...base, grossAnnual: -5000 });
+    expect(negative.netAnnual).toBe(0);
   });
 
-  it("usa el MEI de 2026 cuando se pide ese año", () => {
-    const r2025 = calcularNeto({ ...base, anio: 2025 });
-    const r2026 = calcularNeto({ ...base, anio: 2026 });
-    // El MEID del trabajador sube de 0,13 % a 0,15 %.
-    expect(r2026.seguridadSocial.mei).toBeGreaterThan(r2025.seguridadSocial.mei);
+  it("uses the 2026 MEI when that year is requested", () => {
+    const r2025 = calculateNet({ ...base, year: 2025 });
+    const r2026 = calculateNet({ ...base, year: 2026 });
+    // The employee MEI share rises from 0.13% to 0.15%.
+    expect(r2026.socialSecurity.mei).toBeGreaterThan(r2025.socialSecurity.mei);
   });
 });

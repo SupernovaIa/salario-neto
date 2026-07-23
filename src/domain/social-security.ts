@@ -1,42 +1,45 @@
 import type {
-  DatosEntrada,
-  DesgloseSeguridadSocial,
-  ParametrosFiscales,
+  SalaryInput,
+  SocialSecurityBreakdown,
+  TaxParameters,
 } from "./types";
 
 /**
- * Calcula la cotización anual del trabajador a la Seguridad Social.
+ * Calculates the employee's annual social security contribution.
  *
- * La base de cotización se topa en la base máxima: por encima de ella no se
- * cotiza más (salvo el MEI, que en este modelo simplificado también se topa).
+ * The contribution base is capped at the maximum base: above it there are no
+ * further contributions (in this simplified model the MEI is capped too).
  */
-export function calcularSeguridadSocial(
-  datos: DatosEntrada,
-  parametros: ParametrosFiscales,
-): DesgloseSeguridadSocial {
-  const { cotizacion, baseMaximaCotizacionAnual } = parametros;
+export function calculateSocialSecurity(
+  input: SalaryInput,
+  parameters: TaxParameters,
+): SocialSecurityBreakdown {
+  const { contribution, maxContributionBaseAnnual } = parameters;
 
-  const baseCotizacion = Math.min(datos.brutoAnual, baseMaximaCotizacionAnual);
+  const contributionBase = Math.min(
+    input.grossAnnual,
+    maxContributionBaseAnnual,
+  );
 
-  const tipoDesempleo =
-    datos.tipoContrato === "temporal"
-      ? cotizacion.desempleoTemporal
-      : cotizacion.desempleoIndefinido;
+  const unemploymentRate =
+    input.contractType === "temporary"
+      ? contribution.unemploymentTemporary
+      : contribution.unemploymentPermanent;
 
-  const contingenciasComunes =
-    baseCotizacion * cotizacion.contingenciasComunes;
-  const desempleo = baseCotizacion * tipoDesempleo;
-  const formacionProfesional =
-    baseCotizacion * cotizacion.formacionProfesional;
-  const mei = baseCotizacion * cotizacion.mei;
+  const commonContingencies =
+    contributionBase * contribution.commonContingencies;
+  const unemployment = contributionBase * unemploymentRate;
+  const vocationalTraining =
+    contributionBase * contribution.vocationalTraining;
+  const mei = contributionBase * contribution.mei;
 
-  const total = contingenciasComunes + desempleo + formacionProfesional + mei;
+  const total = commonContingencies + unemployment + vocationalTraining + mei;
 
   return {
-    baseCotizacion,
-    contingenciasComunes,
-    desempleo,
-    formacionProfesional,
+    contributionBase,
+    commonContingencies,
+    unemployment,
+    vocationalTraining,
     mei,
     total,
   };

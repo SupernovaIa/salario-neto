@@ -1,21 +1,20 @@
 import { useMemo, useState } from "react";
 import { SalaryForm } from "./components/SalaryForm";
 import { ResultBreakdown } from "./components/ResultBreakdown";
-import { calcularNeto, type DatosEntrada } from "./domain";
-import { ANIO_POR_DEFECTO } from "./domain";
+import { calculateNet, DEFAULT_YEAR, type SalaryInput } from "./domain";
 
-const DATOS_INICIALES: DatosEntrada = {
-  brutoAnual: 30000,
-  numPagas: 14,
-  tipoContrato: "indefinido",
-  anio: ANIO_POR_DEFECTO,
+const INITIAL_INPUT: SalaryInput = {
+  grossAnnual: 30000,
+  payments: 14,
+  contractType: "permanent",
+  year: DEFAULT_YEAR,
 };
 
 export function App() {
-  const [datos, setDatos] = useState<DatosEntrada>(DATOS_INICIALES);
+  const [input, setInput] = useState<SalaryInput>(INITIAL_INPUT);
 
-  // El cálculo es puro y barato: lo memoizamos por si el resultado se reusa.
-  const resultado = useMemo(() => calcularNeto(datos), [datos]);
+  // The calculation is pure and cheap; memoize in case the result is reused.
+  const result = useMemo(() => calculateNet(input), [input]);
 
   return (
     <div className="page">
@@ -28,8 +27,8 @@ export function App() {
           </p>
         </header>
 
-        <SalaryForm datos={datos} onChange={setDatos} />
-        <ResultBreakdown resultado={resultado} />
+        <SalaryForm input={input} onChange={setInput} />
+        <ResultBreakdown result={result} />
 
         <footer className="card__footer">
           <p>

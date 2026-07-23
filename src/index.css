@@ -7,9 +7,9 @@
   --input-bg: #f9fafb;
   --accent: #2563eb;
 
-  --neto: #16a34a;
+  --net: #16a34a;
   --ss: #f59e0b;
-  --irpf: #ef4444;
+  --tax: #ef4444;
 
   --radius: 14px;
   --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.06);
@@ -106,7 +106,7 @@ body {
   border-color: var(--accent);
 }
 
-.field--bruto input {
+.field--gross input {
   font-size: 1.9rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -146,7 +146,7 @@ input[type="number"] {
   gap: 14px;
 }
 
-.field--anio select {
+.field--year select {
   padding: 12px;
   background: var(--input-bg);
   border: 1px solid var(--border);
@@ -210,7 +210,7 @@ input[type="number"] {
   font-size: 2.8rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: var(--neto);
+  color: var(--net);
 }
 
 .result__hero-sub {
@@ -231,14 +231,14 @@ input[type="number"] {
   height: 100%;
   transition: width 0.35s ease;
 }
-.split-bar__seg--neto {
-  background: var(--neto);
+.split-bar__seg--net {
+  background: var(--net);
 }
 .split-bar__seg--ss {
   background: var(--ss);
 }
-.split-bar__seg--irpf {
-  background: var(--irpf);
+.split-bar__seg--tax {
+  background: var(--tax);
 }
 
 .breakdown {
@@ -286,22 +286,22 @@ input[type="number"] {
   border-radius: 3px;
   display: inline-block;
 }
-.swatch--neto {
-  background: var(--neto);
+.swatch--net {
+  background: var(--net);
 }
 .swatch--ss {
   background: var(--ss);
 }
-.swatch--irpf {
-  background: var(--irpf);
+.swatch--tax {
+  background: var(--tax);
 }
 
-/* ---- Detalle ---- */
-.detalle {
+/* ---- Detail ---- */
+.detail {
   margin-top: 18px;
 }
 
-.detalle summary {
+.detail summary {
   cursor: pointer;
   color: var(--accent);
   font-size: 0.88rem;
@@ -309,33 +309,33 @@ input[type="number"] {
   list-style: none;
   padding: 6px 0;
 }
-.detalle summary::-webkit-details-marker {
+.detail summary::-webkit-details-marker {
   display: none;
 }
-.detalle summary::before {
+.detail summary::before {
   content: "▸ ";
 }
-.detalle[open] summary::before {
+.detail[open] summary::before {
   content: "▾ ";
 }
 
-.detalle__grid {
+.detail__grid {
   margin: 12px 0 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px 20px;
 }
 
-.detalle__item {
+.detail__item {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-.detalle__item dt {
+.detail__item dt {
   font-size: 0.78rem;
   color: var(--muted);
 }
-.detalle__item dd {
+.detail__item dd {
   margin: 0;
   font-size: 0.95rem;
   font-weight: 600;

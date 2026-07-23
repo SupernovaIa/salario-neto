@@ -1,18 +1,18 @@
-import type { DatosEntrada, NumeroPagas, TipoContrato } from "../domain";
-import { ANIOS_DISPONIBLES } from "../domain";
+import type { SalaryInput, PaymentCount, ContractType } from "../domain";
+import { AVAILABLE_YEARS } from "../domain";
 
 interface Props {
-  datos: DatosEntrada;
-  onChange: (datos: DatosEntrada) => void;
+  input: SalaryInput;
+  onChange: (input: SalaryInput) => void;
 }
 
-export function SalaryForm({ datos, onChange }: Props) {
-  const set = <K extends keyof DatosEntrada>(clave: K, valor: DatosEntrada[K]) =>
-    onChange({ ...datos, [clave]: valor });
+export function SalaryForm({ input, onChange }: Props) {
+  const set = <K extends keyof SalaryInput>(key: K, value: SalaryInput[K]) =>
+    onChange({ ...input, [key]: value });
 
   return (
     <form className="form" onSubmit={(e) => e.preventDefault()}>
-      <label className="field field--bruto">
+      <label className="field field--gross">
         <span className="field__label">Salario bruto anual</span>
         <div className="field__input-group">
           <input
@@ -20,8 +20,8 @@ export function SalaryForm({ datos, onChange }: Props) {
             inputMode="numeric"
             min={0}
             step={1000}
-            value={datos.brutoAnual || ""}
-            onChange={(e) => set("brutoAnual", Number(e.target.value))}
+            value={input.grossAnnual || ""}
+            onChange={(e) => set("grossAnnual", Number(e.target.value))}
             placeholder="30000"
             aria-label="Salario bruto anual en euros"
           />
@@ -33,12 +33,12 @@ export function SalaryForm({ datos, onChange }: Props) {
         <label className="field">
           <span className="field__label">Número de pagas</span>
           <div className="segmented" role="group" aria-label="Número de pagas">
-            {([12, 14] as NumeroPagas[]).map((n) => (
+            {([12, 14] as PaymentCount[]).map((n) => (
               <button
                 key={n}
                 type="button"
-                className={datos.numPagas === n ? "is-active" : ""}
-                onClick={() => set("numPagas", n)}
+                className={input.payments === n ? "is-active" : ""}
+                onClick={() => set("payments", n)}
               >
                 {n}
               </button>
@@ -51,31 +51,31 @@ export function SalaryForm({ datos, onChange }: Props) {
           <div className="segmented" role="group" aria-label="Tipo de contrato">
             {(
               [
-                ["indefinido", "Indefinido"],
-                ["temporal", "Temporal"],
-              ] as [TipoContrato, string][]
-            ).map(([valor, texto]) => (
+                ["permanent", "Indefinido"],
+                ["temporary", "Temporal"],
+              ] as [ContractType, string][]
+            ).map(([value, text]) => (
               <button
-                key={valor}
+                key={value}
                 type="button"
-                className={datos.tipoContrato === valor ? "is-active" : ""}
-                onClick={() => set("tipoContrato", valor)}
+                className={input.contractType === value ? "is-active" : ""}
+                onClick={() => set("contractType", value)}
               >
-                {texto}
+                {text}
               </button>
             ))}
           </div>
         </label>
 
-        <label className="field field--anio">
+        <label className="field field--year">
           <span className="field__label">Año</span>
           <select
-            value={datos.anio}
-            onChange={(e) => set("anio", Number(e.target.value))}
+            value={input.year}
+            onChange={(e) => set("year", Number(e.target.value))}
           >
-            {ANIOS_DISPONIBLES.map((anio) => (
-              <option key={anio} value={anio}>
-                {anio}
+            {AVAILABLE_YEARS.map((year) => (
+              <option key={year} value={year}>
+                {year}
               </option>
             ))}
           </select>

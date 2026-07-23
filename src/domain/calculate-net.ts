@@ -1,38 +1,44 @@
-import { calcularIRPF } from "./irpf";
-import { calcularSeguridadSocial } from "./social-security";
-import { parametrosDe } from "./tax-data";
-import type { DatosEntrada, Resultado } from "./types";
+import { calculateIncomeTax } from "./income-tax";
+import { calculateSocialSecurity } from "./social-security";
+import { parametersFor } from "./tax-data";
+import type { SalaryInput, Result } from "./types";
 
 /**
- * Calcula el salario neto a partir del bruto.
+ * Calculates net salary from gross.
  *
- * Punto de entrada del motor: orquesta la cotización a la Seguridad Social y la
- * retención de IRPF, y reparte el neto anual entre el número de pagas.
+ * Engine entry point: orchestrates the social security contribution and the
+ * income-tax withholding, then splits the net annual amount across the number
+ * of payments.
  *
- * NOTA: es un cálculo aproximado. No contempla mínimos por descendientes,
- * situación familiar, discapacidad, ni las regularizaciones del algoritmo
- * exacto de la AEAT. Sirve para estimar, no para cuadrar la nómina al céntimo.
+ * NOTE: this is an approximation. It does not account for child/family
+ * allowances, disability, or the tax agency's exact withholding adjustments.
+ * It is meant to estimate, not to match a payslip to the cent.
  */
-export function calcularNeto(datos: DatosEntrada): Resultado {
-  const parametros = parametrosDe(datos.anio);
-  const brutoAnual = Math.max(0, datos.brutoAnual);
+export function calculateNet(input: SalaryInput): Result {
+  const parameters = parametersFor(input.year);
+  const grossAnnual = Math.max(0, input.grossAnnual);
 
-  const seguridadSocial = calcularSeguridadSocial(
-    { ...datos, brutoAnual },
-    parametros,
+  const socialSecurity = calculateSocialSecurity(
+    { ...input, grossAnnual },
+    parameters,
   );
 
-  const irpf = calcularIRPF(brutoAnual, seguridadSocial.total, parametros);
+  const incomeTax = calculateIncomeTax(
+    grossAnnual,
+    socialSecurity.total,
+    parameters,
+  );
 
-  const netoAnual = brutoAnual - seguridadSocial.total - irpf.retencionAnual;
+  const netAnnual =
+    grossAnnual - socialSecurity.total - incomeTax.annualWithholding;
 
   return {
-    brutoAnual,
-    brutoMensual: brutoAnual / datos.numPagas,
-    seguridadSocial,
-    irpf,
-    netoAnual,
-    netoMensual: netoAnual / datos.numPagas,
-    tipoNetoEfectivo: brutoAnual > 0 ? netoAnual / brutoAnual : 0,
+    grossAnnual,
+    grossMonthly: grossAnnual / input.payments,
+    socialSecurity,
+    incomeTax,
+    netAnnual,
+    netMonthly: netAnnual / input.payments,
+    effectiveNetRate: grossAnnual > 0 ? netAnnual / grossAnnual : 0,
   };
 }

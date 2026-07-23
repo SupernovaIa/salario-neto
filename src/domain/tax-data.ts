@@ -1,73 +1,72 @@
 /**
- * Datos fiscales versionados por año.
+ * Tax data versioned by year.
  *
- * IMPORTANTE: son parámetros públicos (tramos de IRPF, tipos de cotización,
- * topes de la Seguridad Social). Para actualizar de un año a otro basta con
- * añadir una entrada aquí; la lógica de cálculo no cambia.
+ * These are public parameters (income-tax brackets, contribution rates, social
+ * security caps). To update from one year to the next, just add an entry here;
+ * the calculation logic stays the same.
  *
- * La escala de IRPF es la escala general de referencia (estatal + tramo
- * autonómico que coincide con el estatal). En la v2 se sustituirá por la
- * escala de cada comunidad autónoma.
+ * The income-tax scale is the general reference scale (state + regional band
+ * matching the state one). v2 will replace it with each region's own scale.
  */
 
-import type { ParametrosFiscales } from "./types";
+import type { TaxParameters } from "./types";
 
-const PARAMETROS_2025: ParametrosFiscales = {
-  anio: 2025,
-  // Base máxima de cotización: 4.909,50 €/mes × 12.
-  baseMaximaCotizacionAnual: 4909.5 * 12,
-  cotizacion: {
-    contingenciasComunes: 0.047, // 4,70 %
-    desempleoIndefinido: 0.0155, // 1,55 %
-    desempleoTemporal: 0.016, // 1,60 %
-    formacionProfesional: 0.001, // 0,10 %
-    mei: 0.0013, // 0,13 % (cuota del trabajador en 2025)
+const PARAMETERS_2025: TaxParameters = {
+  year: 2025,
+  // Maximum contribution base: €4,909.50/month × 12.
+  maxContributionBaseAnnual: 4909.5 * 12,
+  contribution: {
+    commonContingencies: 0.047, // 4.70%
+    unemploymentPermanent: 0.0155, // 1.55%
+    unemploymentTemporary: 0.016, // 1.60%
+    vocationalTraining: 0.001, // 0.10%
+    mei: 0.0013, // 0.13% (employee share in 2025)
   },
-  escalaIRPF: [
-    { hasta: 12450, tipo: 0.19 },
-    { hasta: 20200, tipo: 0.24 },
-    { hasta: 35200, tipo: 0.3 },
-    { hasta: 60000, tipo: 0.37 },
-    { hasta: 300000, tipo: 0.45 },
-    { hasta: null, tipo: 0.47 },
+  incomeTaxScale: [
+    { upTo: 12450, rate: 0.19 },
+    { upTo: 20200, rate: 0.24 },
+    { upTo: 35200, rate: 0.3 },
+    { upTo: 60000, rate: 0.37 },
+    { upTo: 300000, rate: 0.45 },
+    { upTo: null, rate: 0.47 },
   ],
-  minimoPersonal: 5550,
-  gastosDeducibles: 2000,
-  reduccionTrabajo: {
-    limiteMaximo: 14852,
-    limiteSuperior: 19747.5,
-    reduccionPlena: 7302,
-    coeficiente: 1.75,
+  personalAllowance: 5550,
+  deductibleExpenses: 2000,
+  earnedIncomeReduction: {
+    lowerLimit: 14852,
+    upperLimit: 19747.5,
+    maxReduction: 7302,
+    coefficient: 1.75,
   },
 };
 
-const PARAMETROS_2026: ParametrosFiscales = {
-  ...PARAMETROS_2025,
-  anio: 2026,
-  // La cuota del MEI del trabajador sube 0,02 puntos cada año hasta 2029.
-  cotizacion: {
-    ...PARAMETROS_2025.cotizacion,
-    mei: 0.0015, // 0,15 % en 2026
+const PARAMETERS_2026: TaxParameters = {
+  ...PARAMETERS_2025,
+  year: 2026,
+  // The employee MEI share rises 0.02 points each year until 2029.
+  contribution: {
+    ...PARAMETERS_2025.contribution,
+    mei: 0.0015, // 0.15% in 2026
   },
 };
 
-const PARAMETROS_POR_ANIO: Record<number, ParametrosFiscales> = {
-  2025: PARAMETROS_2025,
-  2026: PARAMETROS_2026,
+const PARAMETERS_BY_YEAR: Record<number, TaxParameters> = {
+  2025: PARAMETERS_2025,
+  2026: PARAMETERS_2026,
 };
 
-/** Último año con parámetros disponibles (usado como valor por defecto). */
-export const ANIO_POR_DEFECTO = 2026;
+/** Most recent year with available parameters (used as the default). */
+export const DEFAULT_YEAR = 2026;
 
-/** Años disponibles, de más reciente a más antiguo. */
-export const ANIOS_DISPONIBLES = Object.keys(PARAMETROS_POR_ANIO)
+/** Available years, newest first. */
+export const AVAILABLE_YEARS = Object.keys(PARAMETERS_BY_YEAR)
   .map(Number)
   .sort((a, b) => b - a);
 
 /**
- * Devuelve los parámetros fiscales de un año. Si no existen, cae al año más
- * reciente disponible.
+ * Returns the tax parameters for a year. Falls back to the most recent year
+ * available if the requested one does not exist.
  */
-export function parametrosDe(anio: number): ParametrosFiscales {
-  return PARAMETROS_POR_ANIO[anio] ?? PARAMETROS_POR_ANIO[ANIO_POR_DEFECTO];
+export function parametersFor(year: number): TaxParameters {
+  return PARAMETERS_BY_YEAR[year] ?? PARAMETERS_BY_YEAR[DEFAULT_YEAR];
 }

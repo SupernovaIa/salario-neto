@@ -1,92 +1,92 @@
 /**
- * Tipos del dominio de cálculo bruto → neto.
- * Todo el motor trabaja con euros anuales salvo que el nombre indique lo contrario.
+ * Domain types for the gross → net calculation.
+ * The engine works in annual euros unless the name says otherwise.
  */
 
-/** Tipo de contrato: afecta al tipo de cotización por desempleo. */
-export type TipoContrato = "indefinido" | "temporal";
+/** Contract type: affects the unemployment contribution rate. */
+export type ContractType = "permanent" | "temporary";
 
-/** Número de pagas anuales (12 o 14). */
-export type NumeroPagas = 12 | 14;
+/** Number of yearly payments (12 or 14). */
+export type PaymentCount = 12 | 14;
 
-/** Datos que introduce el usuario. */
-export interface DatosEntrada {
-  /** Salario bruto anual en euros. */
-  brutoAnual: number;
-  /** Número de pagas (12 o 14). Solo afecta al reparto mensual, no al total. */
-  numPagas: NumeroPagas;
-  /** Tipo de contrato. */
-  tipoContrato: TipoContrato;
-  /** Año fiscal cuyos parámetros se aplican. */
-  anio: number;
+/** User-provided input. */
+export interface SalaryInput {
+  /** Gross annual salary in euros. */
+  grossAnnual: number;
+  /** Number of payments (12 or 14). Only affects the monthly split, not the total. */
+  payments: PaymentCount;
+  /** Contract type. */
+  contractType: ContractType;
+  /** Tax year whose parameters apply. */
+  year: number;
 }
 
-/** Tramo de una escala progresiva. `hasta = null` representa "sin límite superior". */
-export interface Tramo {
-  hasta: number | null;
-  tipo: number; // proporción, p.ej. 0.19 = 19 %
+/** A progressive-scale bracket. `upTo = null` means "no upper limit". */
+export interface Bracket {
+  upTo: number | null;
+  rate: number; // proportion, e.g. 0.19 = 19%
 }
 
-/** Tipos de cotización del trabajador a la Seguridad Social (proporciones). */
-export interface TiposCotizacion {
-  contingenciasComunes: number;
-  desempleoIndefinido: number;
-  desempleoTemporal: number;
-  formacionProfesional: number;
-  /** Mecanismo de Equidad Intergeneracional (cuota del trabajador). */
+/** Employee's social security contribution rates (proportions). */
+export interface ContributionRates {
+  commonContingencies: number;
+  unemploymentPermanent: number;
+  unemploymentTemporary: number;
+  vocationalTraining: number;
+  /** Intergenerational Equity Mechanism (employee share). */
   mei: number;
 }
 
-/** Parámetros fiscales de un año concreto. */
-export interface ParametrosFiscales {
-  anio: number;
-  /** Base máxima de cotización anual (tope superior). */
-  baseMaximaCotizacionAnual: number;
-  cotizacion: TiposCotizacion;
-  /** Escala general de IRPF (estatal + autonómica de referencia). */
-  escalaIRPF: Tramo[];
-  /** Mínimo personal y familiar general. */
-  minimoPersonal: number;
-  /** "Otros gastos" deducibles del rendimiento del trabajo (art. 19.2.f LIRPF). */
-  gastosDeducibles: number;
-  /** Parámetros de la reducción por obtención de rendimientos del trabajo (art. 20). */
-  reduccionTrabajo: {
-    limiteMaximo: number; // por debajo => reducción plena
-    limiteSuperior: number; // por encima => reducción 0
-    reduccionPlena: number;
-    coeficiente: number; // pendiente de decremento en el tramo intermedio
+/** Tax parameters for a given year. */
+export interface TaxParameters {
+  year: number;
+  /** Annual maximum contribution base (upper cap). */
+  maxContributionBaseAnnual: number;
+  contribution: ContributionRates;
+  /** General income-tax scale (state + reference regional). */
+  incomeTaxScale: Bracket[];
+  /** General personal and family allowance. */
+  personalAllowance: number;
+  /** Deductible "other expenses" from earned income (art. 19.2.f LIRPF). */
+  deductibleExpenses: number;
+  /** Parameters of the earned-income reduction (art. 20 LIRPF). */
+  earnedIncomeReduction: {
+    lowerLimit: number; // below this => full reduction
+    upperLimit: number; // above this => zero reduction
+    maxReduction: number;
+    coefficient: number; // decrement slope in the intermediate band
   };
 }
 
-/** Desglose de la cotización a la Seguridad Social. */
-export interface DesgloseSeguridadSocial {
-  baseCotizacion: number;
-  contingenciasComunes: number;
-  desempleo: number;
-  formacionProfesional: number;
+/** Social security contribution breakdown. */
+export interface SocialSecurityBreakdown {
+  contributionBase: number;
+  commonContingencies: number;
+  unemployment: number;
+  vocationalTraining: number;
   mei: number;
   total: number;
 }
 
-/** Desglose del cálculo de IRPF. */
-export interface DesgloseIRPF {
-  rendimientoNetoPrevio: number;
-  reduccionTrabajo: number;
-  baseLiquidable: number;
-  cuotaLiquida: number;
-  /** Tipo de retención resultante (proporción sobre el bruto). */
-  tipoRetencion: number;
-  retencionAnual: number;
+/** Income-tax calculation breakdown. */
+export interface IncomeTaxBreakdown {
+  netIncomeBeforeReduction: number;
+  earnedIncomeReduction: number;
+  taxableBase: number;
+  taxDue: number;
+  /** Resulting withholding rate (proportion of gross). */
+  withholdingRate: number;
+  annualWithholding: number;
 }
 
-/** Resultado completo del cálculo. */
-export interface Resultado {
-  brutoAnual: number;
-  brutoMensual: number;
-  seguridadSocial: DesgloseSeguridadSocial;
-  irpf: DesgloseIRPF;
-  netoAnual: number;
-  netoMensual: number;
-  /** Proporción del bruto que se queda el trabajador. */
-  tipoNetoEfectivo: number;
+/** Full calculation result. */
+export interface Result {
+  grossAnnual: number;
+  grossMonthly: number;
+  socialSecurity: SocialSecurityBreakdown;
+  incomeTax: IncomeTaxBreakdown;
+  netAnnual: number;
+  netMonthly: number;
+  /** Proportion of gross the employee keeps. */
+  effectiveNetRate: number;
 }
