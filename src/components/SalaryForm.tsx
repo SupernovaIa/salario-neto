@@ -31,7 +31,7 @@ export function SalaryForm({ input, onChange }: Props) {
 
       <div className="field-row">
         <label className="field">
-          <span className="field__label">Número de pagas</span>
+          <span className="field__label">Pagas</span>
           <div className="segmented" role="group" aria-label="Número de pagas">
             {([12, 14] as PaymentCount[]).map((n) => (
               <button
