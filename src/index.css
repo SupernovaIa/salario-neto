@@ -1,33 +1,47 @@
 :root {
-  --bg: #f4f5f7;
-  --card: #ffffff;
-  --text: #1a1d21;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --input-bg: #f9fafb;
-  --accent: #2563eb;
+  /* Warm ivory palette (Anthropic-ish): cream backgrounds, terracotta accent. */
+  --bg: #f0eee6;
+  --card: #fbfaf6;
+  --text: #1d1b16;
+  --muted: #71695b;
+  --border: #e4dfd2;
+  --input-bg: #f4f2ea;
+  --accent: #c15f3c;
+  --accent-soft: #e9d9cf;
 
-  --net: #16a34a;
-  --ss: #f59e0b;
-  --tax: #ef4444;
+  /* Warm earth tones for the split; harmonize with the cream. */
+  --net: #4f7d5e;
+  --ss: #c79a3f;
+  --tax: #bd5a3c;
 
-  --radius: 14px;
-  --shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.06);
+  --radius: 16px;
+  --shadow: 0 1px 2px rgba(60, 50, 30, 0.05),
+    0 18px 40px -12px rgba(60, 50, 30, 0.12);
 
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
+    "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", sans-serif;
+
+  font-family: var(--font-sans);
   color-scheme: light dark;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --bg: #0f1115;
-    --card: #181b21;
-    --text: #e8eaed;
-    --muted: #9aa1ab;
-    --border: #2a2e37;
-    --input-bg: #21252e;
-    --accent: #60a5fa;
-    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 12px 32px rgba(0, 0, 0, 0.35);
+    --bg: #21201b;
+    --card: #2b2a24;
+    --text: #f0eee6;
+    --muted: #a8a08f;
+    --border: #3d3b32;
+    --input-bg: #34322b;
+    --accent: #e0866a;
+    --accent-soft: #3f342d;
+    --net: #7fb08a;
+    --ss: #d9b565;
+    --tax: #dd8168;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4),
+      0 20px 44px -12px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -40,36 +54,41 @@ body {
   background: var(--bg);
   color: var(--text);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .page {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 24px 16px;
+  padding: 40px 16px;
 }
 
 .card {
   width: 100%;
-  max-width: 520px;
+  max-width: 540px;
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 28px;
+  padding: 40px 36px;
 }
 
 .card__header h1 {
-  margin: 0 0 6px;
-  font-size: 1.6rem;
-  letter-spacing: -0.02em;
+  margin: 0 0 10px;
+  font-family: var(--font-serif);
+  font-weight: 600;
+  font-size: 2.15rem;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
 }
 
 .card__header p {
   margin: 0;
   color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.5;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  max-width: 42ch;
 }
 
 /* ---- Formulario ---- */
@@ -87,9 +106,10 @@ body {
 }
 
 .field__label {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--muted);
+  letter-spacing: 0.01em;
 }
 
 .field__input-group {
@@ -97,19 +117,21 @@ body {
   align-items: center;
   background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 0 14px;
-  transition: border-color 0.15s;
+  border-radius: 12px;
+  padding: 0 16px;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .field__input-group:focus-within {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .field--gross input {
-  font-size: 1.9rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-family: var(--font-serif);
+  font-size: 2.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .field input,
@@ -148,21 +170,24 @@ input[type="number"] {
 
 .field--year select,
 .field__select {
-  padding: 12px;
+  padding: 13px;
   background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
+.field--year select:focus,
 .field__select:focus {
   border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .segmented {
   display: flex;
   background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 3px;
   gap: 3px;
 }
@@ -181,10 +206,17 @@ input[type="number"] {
   transition: all 0.15s;
 }
 
+.segmented button:hover {
+  color: var(--text);
+}
+
 .segmented button.is-active {
   background: var(--card);
-  color: var(--text);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  color: var(--accent);
+  box-shadow: 0 1px 3px rgba(60, 50, 30, 0.14);
+}
+.segmented button.is-active:hover {
+  color: var(--accent);
 }
 
 /* ---- Circunstancias personales ---- */
@@ -268,22 +300,24 @@ input[type="number"] {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 4px;
-  margin-bottom: 22px;
+  gap: 6px;
+  margin-bottom: 26px;
 }
 
 .result__hero-label {
-  font-size: 0.82rem;
+  font-size: 0.72rem;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.14em;
 }
 
 .result__hero-value {
-  font-size: 2.8rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+  font-family: var(--font-serif);
+  font-size: 3.3rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.01em;
   color: var(--net);
 }
 
@@ -294,11 +328,12 @@ input[type="number"] {
 
 .split-bar {
   display: flex;
-  height: 12px;
-  border-radius: 6px;
+  height: 10px;
+  border-radius: 999px;
   overflow: hidden;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   background: var(--input-bg);
+  gap: 2px;
 }
 
 .split-bar__seg {
