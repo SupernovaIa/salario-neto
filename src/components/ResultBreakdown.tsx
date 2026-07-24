@@ -41,14 +41,21 @@ export function ResultBreakdown({ result }: Props) {
             <span
               className="split-bar__seg split-bar__seg--net"
               style={{ width: `${netPct * 100}%` }}
+              title={`Neto · ${formatEuros(netAnnual)} (${formatPercent(netPct)})`}
             />
             <span
               className="split-bar__seg split-bar__seg--ss"
               style={{ width: `${ssPct * 100}%` }}
+              title={`Seguridad Social · ${formatEuros(
+                socialSecurity.total,
+              )} (${formatPercent(ssPct)})`}
             />
             <span
               className="split-bar__seg split-bar__seg--tax"
               style={{ width: `${taxPct * 100}%` }}
+              title={`Retención IRPF · ${formatEuros(
+                incomeTax.annualWithholding,
+              )} (${formatPercent(taxPct)})`}
             />
           </div>
 

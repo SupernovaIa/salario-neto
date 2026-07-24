@@ -9,10 +9,11 @@
   --accent: #c15f3c;
   --accent-soft: #e9d9cf;
 
-  /* Warm earth tones for the split; harmonize with the cream. */
-  --net: #4f7d5e;
-  --ss: #c79a3f;
-  --tax: #bd5a3c;
+  /* Categorical palette for the split (net / SS / tax), validated for CVD and
+     contrast with scripts/validate_palette.js against the result surface. */
+  --net: #2f8659;
+  --ss: #cc8a2c;
+  --tax: #c14b32;
 
   --radius: 16px;
   --shadow: 0 1px 2px rgba(60, 50, 30, 0.05),
@@ -37,9 +38,10 @@
     --input-bg: #34322b;
     --accent: #e0866a;
     --accent-soft: #3f342d;
-    --net: #7fb08a;
-    --ss: #d9b565;
-    --tax: #dd8168;
+    /* Dark steps re-validated against the dark result surface (#34322b). */
+    --net: #40976a;
+    --ss: #b88e26;
+    --tax: #c04431;
     --shadow: 0 1px 2px rgba(0, 0, 0, 0.4),
       0 20px 44px -12px rgba(0, 0, 0, 0.5);
   }
