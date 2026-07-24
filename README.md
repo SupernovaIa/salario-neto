@@ -3,6 +3,8 @@
 Gross → net salary calculator for Spain. Enter your annual gross and get the
 monthly net, with a Social Security and income-tax (IRPF) breakdown.
 
+**Live demo:** https://salario-neto-phi.vercel.app/
+
 Frontend-only: the whole calculation runs in the browser.
 
 ## Stack
