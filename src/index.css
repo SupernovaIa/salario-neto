@@ -510,6 +510,18 @@ input[type="number"] {
   color: var(--muted);
 }
 
+.card__credit {
+  margin-top: 10px !important;
+}
+.card__credit a {
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 600;
+}
+.card__credit a:hover {
+  text-decoration: underline;
+}
+
 /* Stack into a single column on narrow / mobile viewports. */
 @media (max-width: 760px) {
   .card {

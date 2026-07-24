@@ -59,6 +59,24 @@ export function App() {
               regularizaciones exactas de la AEAT, así que no sustituye a tu
               nómina real.
             </p>
+            <p className="card__credit">
+              Hecho por{" "}
+              <a
+                href="https://www.linkedin.com/in/javier-carreira-c/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Javier Carreira
+              </a>{" "}
+              ·{" "}
+              <a
+                href="https://github.com/SupernovaIa/salario-neto"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Código
+              </a>
+            </p>
           </footer>
         </section>
       </main>
