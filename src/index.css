@@ -1,50 +1,44 @@
 :root {
-  /* Warm ivory palette (Anthropic-ish): cream backgrounds, terracotta accent. */
-  --bg: #f0eee6;
-  --card: #fbfaf6;
-  --text: #1d1b16;
-  --muted: #71695b;
-  --border: #e4dfd2;
-  --input-bg: #f4f2ea;
-  --accent: #c15f3c;
-  --accent-soft: #e9d9cf;
+  /* Default: follow the system scheme. The theme toggle overrides this by
+     forcing `color-scheme` below, and light-dark() picks the value to match. */
+  color-scheme: light dark;
+
+  /* Warm ivory palette (Anthropic-ish): cream backgrounds, terracotta accent.
+     Each token is light-dark(<light>, <dark>) — a single source for both modes. */
+  --bg: light-dark(#f0eee6, #21201b);
+  --card: light-dark(#fbfaf6, #2b2a24);
+  --text: light-dark(#1d1b16, #f0eee6);
+  --muted: light-dark(#71695b, #a8a08f);
+  --border: light-dark(#e4dfd2, #3d3b32);
+  --input-bg: light-dark(#f4f2ea, #34322b);
+  --accent: light-dark(#c15f3c, #e0866a);
+  --accent-soft: light-dark(#e9d9cf, #3f342d);
 
   /* Categorical palette for the split (net / SS / tax), validated for CVD and
-     contrast with scripts/validate_palette.js against the result surface. */
-  --net: #2f8659;
-  --ss: #cc8a2c;
-  --tax: #c14b32;
+     contrast (dataviz validator) against each mode's result surface. */
+  --net: light-dark(#2f8659, #40976a);
+  --ss: light-dark(#cc8a2c, #b88e26);
+  --tax: light-dark(#c14b32, #c04431);
+
+  --shadow-lo: light-dark(rgba(60, 50, 30, 0.05), rgba(0, 0, 0, 0.4));
+  --shadow-hi: light-dark(rgba(60, 50, 30, 0.12), rgba(0, 0, 0, 0.5));
+  --shadow: 0 1px 2px var(--shadow-lo), 0 18px 42px -12px var(--shadow-hi);
 
   --radius: 16px;
-  --shadow: 0 1px 2px rgba(60, 50, 30, 0.05),
-    0 18px 40px -12px rgba(60, 50, 30, 0.12);
-
   --font-serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia,
     "Times New Roman", serif;
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
     "Helvetica Neue", sans-serif;
 
   font-family: var(--font-sans);
-  color-scheme: light dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #21201b;
-    --card: #2b2a24;
-    --text: #f0eee6;
-    --muted: #a8a08f;
-    --border: #3d3b32;
-    --input-bg: #34322b;
-    --accent: #e0866a;
-    --accent-soft: #3f342d;
-    /* Dark steps re-validated against the dark result surface (#34322b). */
-    --net: #40976a;
-    --ss: #b88e26;
-    --tax: #c04431;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4),
-      0 20px 44px -12px rgba(0, 0, 0, 0.5);
-  }
+/* The toggle forces a scheme; light-dark() then resolves to that mode. */
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 * {
@@ -94,6 +88,13 @@ body {
   background: var(--input-bg);
 }
 
+.card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .card__header h1 {
   margin: 0 0 10px;
   font-family: var(--font-serif);
@@ -101,6 +102,29 @@ body {
   font-size: 2.15rem;
   line-height: 1.1;
   letter-spacing: -0.01em;
+}
+
+.theme-toggle {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  margin-top: 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  color: var(--muted);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color 0.15s, border-color 0.15s;
+}
+.theme-toggle:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
 }
 
 .card__header p {

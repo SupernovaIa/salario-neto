@@ -9,6 +9,14 @@
       name="description"
       content="Calcula tu salario neto mensual a partir del bruto anual. Desglose de Seguridad Social e IRPF. Cálculo aproximado."
     />
+    <script>
+      // Set the saved theme before first paint to avoid a flash of the wrong one.
+      try {
+        var t = localStorage.getItem("theme");
+        if (t === "light" || t === "dark")
+          document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    </script>
   </head>
   <body>
     <div id="root"></div>

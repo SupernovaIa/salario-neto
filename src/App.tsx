@@ -1,11 +1,27 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SalaryForm } from "./components/SalaryForm";
 import { PersonalForm } from "./components/PersonalForm";
 import { ResultBreakdown } from "./components/ResultBreakdown";
+import { ThemeToggle } from "./components/ThemeToggle";
 import { calculateNet, DEFAULT_INPUT, type SalaryInput } from "./domain";
+import { getInitialTheme, storeTheme, type Theme } from "./lib/theme";
 
 export function App() {
   const [input, setInput] = useState<SalaryInput>(DEFAULT_INPUT);
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+
+  // Reflect the theme on the root so `color-scheme` (and light-dark()) follows.
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((current) => {
+      const next = current === "dark" ? "light" : "dark";
+      storeTheme(next);
+      return next;
+    });
+  };
 
   // The calculation is pure and cheap; memoize in case the result is reused.
   const result = useMemo(() => calculateNet(input), [input]);
@@ -15,11 +31,14 @@ export function App() {
       <main className="card">
         <section className="card__panel card__panel--form">
           <header className="card__header">
-            <h1>Del bruto al neto</h1>
-            <p>
-              Calcula tu salario neto mensual a partir del bruto anual, con el
-              desglose de Seguridad Social e IRPF.
-            </p>
+            <div className="card__header-text">
+              <h1>Del bruto al neto</h1>
+              <p>
+                Calcula tu salario neto mensual a partir del bruto anual, con el
+                desglose de Seguridad Social e IRPF.
+              </p>
+            </div>
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
           </header>
 
           <SalaryForm input={input} onChange={setInput} />
