@@ -1,5 +1,6 @@
 import type { SalaryInput, PaymentCount, ContractType } from "../domain";
-import { AVAILABLE_YEARS, REGIONS } from "../domain";
+import { AVAILABLE_YEARS } from "../domain";
+import { RegionSelect } from "./RegionSelect";
 
 interface Props {
   input: SalaryInput;
@@ -82,20 +83,10 @@ export function SalaryForm({ input, onChange }: Props) {
         </label>
       </div>
 
-      <label className="field">
-        <span className="field__label">Comunidad autónoma</span>
-        <select
-          className="field__select"
-          value={input.region}
-          onChange={(e) => set("region", e.target.value)}
-        >
-          {REGIONS.map((region) => (
-            <option key={region.id} value={region.id}>
-              {region.name}
-            </option>
-          ))}
-        </select>
-      </label>
+      <RegionSelect
+        value={input.region}
+        onChange={(region) => set("region", region)}
+      />
     </form>
   );
 }

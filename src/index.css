@@ -264,6 +264,103 @@ input[type="number"] {
   color: var(--accent);
 }
 
+/* ---- Selector de comunidad ---- */
+.region-select {
+  position: relative;
+}
+
+.region-select__trigger {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 13px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 1rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.region-select__trigger:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.region-select__trigger[aria-expanded="true"] {
+  border-color: var(--accent);
+}
+
+.region-select__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.region-select__caret {
+  flex-shrink: 0;
+  width: 12px;
+  height: 12px;
+  color: var(--muted);
+  transition: transform 0.15s;
+}
+.region-select__trigger[aria-expanded="true"] .region-select__caret {
+  transform: rotate(180deg);
+}
+
+/* Opens upwards: the field sits at the bottom of the form panel and `.card`
+   clips its overflow, so a downwards list would be cut off. */
+.region-select__list {
+  position: absolute;
+  z-index: 10;
+  bottom: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 252px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 6px;
+  list-style: none;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.region-select__option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+.region-select__option[data-active="true"] {
+  background: var(--accent-soft);
+}
+.region-select__option[aria-selected="true"] {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* Hairline ring so pale flags (Cantabria, Galicia) don't bleed into the field. */
+.flag {
+  flex-shrink: 0;
+  width: 22px;
+  height: 14.67px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px
+    light-dark(rgba(0, 0, 0, 0.16), rgba(255, 255, 255, 0.22));
+}
+.flag--placeholder {
+  box-shadow: none;
+}
+
 /* ---- Circunstancias personales ---- */
 .personal {
   margin-bottom: 24px;
