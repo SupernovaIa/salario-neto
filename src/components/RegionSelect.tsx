@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { REGIONS } from "../domain";
+import { findNextMatch } from "../lib/type-ahead";
 import { RegionFlag } from "./RegionFlag";
 
 interface Props {
@@ -7,26 +8,7 @@ interface Props {
   onChange: (region: string) => void;
 }
 
-/** Fold accents and case so type-ahead matches "Á" with "a". */
-const fold = (text: string) =>
-  text
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toLowerCase();
-
-/** Connectors that nobody types when looking for a community. */
-const CONNECTORS = new Set(["de", "y"]);
-
-/**
- * Initials a community answers to when typing: most names lead with a generic
- * word ("Comunidad de Madrid", "Región de Murcia"), so every meaningful word
- * counts, not just the first.
- */
-const initialsOf = (name: string) =>
-  fold(name)
-    .split(/[\s-]+/)
-    .filter((word) => word && !CONNECTORS.has(word))
-    .map((word) => word[0]);
+const REGION_LABELS = REGIONS.map((region) => region.name);
 
 /**
  * Community picker. A native <select> cannot render the flags inside its
@@ -80,19 +62,15 @@ export function RegionSelect({ value, onChange }: Props) {
     buttonRef.current?.focus();
   };
 
-  // Jump to the next community matching the typed letter, wrapping around, so
-  // pressing it again cycles through the matches.
+  // Jump to the next community matching the typed letter; pressing it again
+  // cycles through the rest.
   const jumpToLetter = (letter: string) => {
-    const target = fold(letter);
     const from = open ? activeIndex : selectedIndex;
-    for (let step = 1; step <= REGIONS.length; step++) {
-      const index = (from + step) % REGIONS.length;
-      if (initialsOf(REGIONS[index].name).includes(target)) {
-        setActiveIndex(index);
-        if (!open) setOpen(true);
-        return;
-      }
-    }
+    const match = findNextMatch(REGION_LABELS, letter, from);
+    if (match === null) return;
+
+    setActiveIndex(match);
+    if (!open) setOpen(true);
   };
 
   const onKeyDown = (event: React.KeyboardEvent) => {

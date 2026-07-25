@@ -15,9 +15,12 @@ Gross → net salary calculator for Spain. Frontend-only (React + TypeScript + V
 - `src/components/` — UI. Spanish user-facing text lives here.
 - `src/lib/format.ts` — euro/percent formatting (`es-ES` via `Intl`).
 - `src/lib/theme.ts` — light/dark preference, persisted in `localStorage`.
+- `src/lib/type-ahead.ts` — letter-jump matching for the community listbox.
 
-Engine tests live in `src/domain/__tests__/` (Vitest). There are no component
-tests: the UI is thin on purpose and the logic worth testing sits in the domain.
+Tests live next to what they cover, in `__tests__/` (Vitest): the engine in
+`src/domain/`, pure UI helpers in `src/lib/`. There are no component tests —
+instead, logic that deserves testing gets pulled out of the component into a
+pure module, which is why `type-ahead.ts` exists.
 
 Tax parameters are versioned by year in `src/domain/tax-data.ts`. Updating for a
 new year means adding an entry there; the logic does not change.
