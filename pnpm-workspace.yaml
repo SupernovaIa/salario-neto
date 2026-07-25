@@ -1,0 +1,5 @@
+# pnpm settings live here since pnpm 10; the `pnpm` field in package.json is no
+# longer read. esbuild (a Vite dependency) needs its install script to place the
+# platform binary, and an unapproved build script makes `pnpm install` fail.
+allowBuilds:
+  esbuild: true

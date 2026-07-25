@@ -19,10 +19,10 @@ separate from the UI. Tax parameters are versioned by year in `tax-data.ts`.
 ## Commands
 
 ```bash
-npm install
-npm run dev     # dev server
-npm test        # engine tests
-npm run build   # production build
+pnpm install
+pnpm dev        # dev server
+pnpm test       # engine tests
+pnpm build      # production build
 ```
 
 ## Scope

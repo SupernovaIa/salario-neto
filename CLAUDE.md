@@ -19,8 +19,11 @@ new year means adding an entry there; the logic does not change.
 
 ## Commands
 
+Package manager: **pnpm** (pinned via `packageManager` in `package.json`). Do not
+use npm or yarn here — a `package-lock.json` would break the pnpm-only setup.
+
 ```bash
-npm run dev     # dev server
-npm test        # engine tests (Vitest)
-npm run build   # typecheck + production build
+pnpm dev        # dev server
+pnpm test       # engine tests (Vitest)
+pnpm build      # typecheck + production build
 ```
