@@ -101,6 +101,12 @@ export interface EmployerContributionRates {
 /** Tax parameters for a given year. */
 export interface TaxParameters {
   year: number;
+  /**
+   * True when the year's figures are not fully confirmed yet and some are
+   * carried over from the previous year. Surfaced in the UI so the estimate is
+   * not read as official.
+   */
+  provisional?: boolean;
   /** Annual maximum contribution base (upper cap). */
   maxContributionBaseAnnual: number;
   contribution: ContributionRates;

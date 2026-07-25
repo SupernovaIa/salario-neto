@@ -6,6 +6,7 @@ export {
   DEFAULT_YEAR,
   REGIONS,
   DEFAULT_REGION,
+  isProvisionalYear,
   type Region,
 } from "./tax-data";
 export type {

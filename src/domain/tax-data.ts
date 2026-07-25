@@ -73,9 +73,20 @@ const PARAMETERS_2025: TaxParameters = {
   },
 };
 
+/**
+ * 2026: PROVISIONAL. Only the MEI is confirmed here. The income-tax scales
+ * (state and regional), the personal and family minimum, the earned-income
+ * reduction and the maximum contribution base are still the 2025 figures,
+ * carried over by the spread below — so picking 2026 differs from 2025 by
+ * 0.02 points of MEI and nothing else.
+ *
+ * Replace each carried-over value with the official one as the BOE publishes
+ * it, and drop `provisional` once nothing is inherited any more.
+ */
 const PARAMETERS_2026: TaxParameters = {
   ...PARAMETERS_2025,
   year: 2026,
+  provisional: true,
   // The MEI rises 0.10 points a year until 2029, split 1/6 employee, 5/6
   // employer: 0.90% in 2026 = 0.15% + 0.75%.
   contribution: {
@@ -126,4 +137,9 @@ export const AVAILABLE_YEARS = Object.keys(PARAMETERS_BY_YEAR)
  */
 export function parametersFor(year: number): TaxParameters {
   return PARAMETERS_BY_YEAR[year] ?? PARAMETERS_BY_YEAR[DEFAULT_YEAR];
+}
+
+/** Whether a year still carries figures over from the previous one. */
+export function isProvisionalYear(year: number): boolean {
+  return parametersFor(year).provisional === true;
 }

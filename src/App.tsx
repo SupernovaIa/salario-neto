@@ -3,7 +3,12 @@ import { SalaryForm } from "./components/SalaryForm";
 import { PersonalForm } from "./components/PersonalForm";
 import { ResultBreakdown } from "./components/ResultBreakdown";
 import { ThemeToggle } from "./components/ThemeToggle";
-import { calculateNet, DEFAULT_INPUT, type SalaryInput } from "./domain";
+import {
+  calculateNet,
+  DEFAULT_INPUT,
+  isProvisionalYear,
+  type SalaryInput,
+} from "./domain";
 import { getInitialTheme, storeTheme, type Theme } from "./lib/theme";
 
 export function App() {
@@ -64,6 +69,14 @@ export function App() {
               lo fija la tarifa de primas según la actividad (CNAE), entre el
               1 % de oficinas y el 6,7 % de construcción.
             </p>
+            {isProvisionalYear(input.year) && (
+              <p className="card__note">
+                <strong>{input.year}* es provisional:</strong> solo el MEI está
+                actualizado. Las escalas de IRPF, los mínimos y la base máxima
+                de cotización son todavía los de {input.year - 1}, hasta que se
+                publiquen los oficiales.
+              </p>
+            )}
             <p className="card__credit">
               Hecho por{" "}
               <a

@@ -1,5 +1,5 @@
 import type { SalaryInput, PaymentCount, ContractType } from "../domain";
-import { AVAILABLE_YEARS } from "../domain";
+import { AVAILABLE_YEARS, isProvisionalYear } from "../domain";
 import { RegionSelect } from "./RegionSelect";
 
 interface Props {
@@ -76,7 +76,8 @@ export function SalaryForm({ input, onChange }: Props) {
           >
             {AVAILABLE_YEARS.map((year) => (
               <option key={year} value={year}>
-                {year}
+                {/* The asterisk is explained by the provisional-year footer note. */}
+                {isProvisionalYear(year) ? `${year}*` : year}
               </option>
             ))}
           </select>
