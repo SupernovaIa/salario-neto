@@ -16,6 +16,7 @@ export type {
   DisabilityLevel,
   PersonalCircumstances,
   SocialSecurityBreakdown,
+  EmployerCostBreakdown,
   IncomeTaxBreakdown,
 } from "./types";
 

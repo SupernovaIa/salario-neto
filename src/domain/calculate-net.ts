@@ -1,6 +1,9 @@
 import { calculateFamilyMinimum } from "./family-minimum";
 import { calculateIncomeTax } from "./income-tax";
-import { calculateSocialSecurity } from "./social-security";
+import {
+  calculateEmployerCost,
+  calculateSocialSecurity,
+} from "./social-security";
 import { parametersFor } from "./tax-data";
 import type { SalaryInput, Result } from "./types";
 
@@ -20,6 +23,11 @@ export function calculateNet(input: SalaryInput): Result {
   const grossAnnual = Math.max(0, input.grossAnnual);
 
   const socialSecurity = calculateSocialSecurity(
+    { ...input, grossAnnual },
+    parameters,
+  );
+
+  const employerCost = calculateEmployerCost(
     { ...input, grossAnnual },
     parameters,
   );
@@ -44,6 +52,7 @@ export function calculateNet(input: SalaryInput): Result {
     grossAnnual,
     grossMonthly: grossAnnual / input.payments,
     socialSecurity,
+    employerCost,
     incomeTax,
     netAnnual,
     netMonthly: netAnnual / input.payments,

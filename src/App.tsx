@@ -59,6 +59,11 @@ export function App() {
               regularizaciones exactas de la AEAT, así que no sustituye a tu
               nómina real.
             </p>
+            <p className="card__note">
+              El coste de empresa incluye AT/EP estimado al 1,5 %: el tipo real
+              lo fija la tarifa de primas según la actividad (CNAE), entre el
+              1 % de oficinas y el 6,7 % de construcción.
+            </p>
             <p className="card__credit">
               Hecho por{" "}
               <a

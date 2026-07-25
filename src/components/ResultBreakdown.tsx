@@ -6,7 +6,8 @@ interface Props {
 }
 
 export function ResultBreakdown({ result }: Props) {
-  const { socialSecurity, incomeTax, netAnnual, grossAnnual } = result;
+  const { socialSecurity, employerCost, incomeTax, netAnnual, grossAnnual } =
+    result;
 
   // Proportions for the gross-split bar.
   const netPct = grossAnnual > 0 ? netAnnual / grossAnnual : 0;
@@ -75,6 +76,23 @@ export function ResultBreakdown({ result }: Props) {
             />
           </dl>
 
+          {/* Different denominator from the bar above: this one is on top of
+              the gross, not a slice of it. Monthly is over 12, since the
+              employer pays contributions monthly whatever the payment count. */}
+          <div className="employer">
+            <div className="employer__row">
+              <span className="employer__label">Coste total empresa</span>
+              <strong className="employer__value">
+                {formatEuros(employerCost.totalCost)}
+              </strong>
+            </div>
+            <p className="employer__hint">
+              {formatEuros(employerCost.totalCost / 12)}/mes en 12 meses ·{" "}
+              {formatEuros(employerCost.total)} de cuota patronal (
+              {formatPercent(employerCost.overheadRate)} sobre el bruto)
+            </p>
+          </div>
+
           <details className="detail">
             <summary>Ver desglose completo</summary>
             <dl className="detail__grid">
@@ -109,6 +127,28 @@ export function ResultBreakdown({ result }: Props) {
               <Detail
                 label="Tipo neto efectivo"
                 value={formatPercent(result.effectiveNetRate)}
+              />
+              <Detail
+                label="Cuota patronal total"
+                value={employerCost.total}
+              />
+              <Detail
+                label="Cont. comunes (empresa)"
+                value={employerCost.commonContingencies}
+              />
+              <Detail
+                label="Desempleo (empresa)"
+                value={employerCost.unemployment}
+              />
+              <Detail label="FOGASA" value={employerCost.wageGuaranteeFund} />
+              <Detail
+                label="Formación prof. (empresa)"
+                value={employerCost.vocationalTraining}
+              />
+              <Detail label="MEI (empresa)" value={employerCost.mei} />
+              <Detail
+                label="AT/EP (estimado)"
+                value={employerCost.occupationalRisk}
               />
             </dl>
           </details>

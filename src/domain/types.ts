@@ -79,12 +79,33 @@ export interface ContributionRates {
   mei: number;
 }
 
+/** Employer's social security contribution rates (proportions). */
+export interface EmployerContributionRates {
+  commonContingencies: number;
+  unemploymentPermanent: number;
+  unemploymentTemporary: number;
+  /** Wage Guarantee Fund (FOGASA), paid entirely by the employer. */
+  wageGuaranteeFund: number;
+  vocationalTraining: number;
+  /** Intergenerational Equity Mechanism (employer share). */
+  mei: number;
+  /**
+   * Occupational accident and illness cover (AT/EP). The real rate comes from
+   * the yearly premium table and depends on the employer's activity (CNAE),
+   * from 1.00% for office work to 6.70% for construction, so this is a single
+   * representative estimate for service activities.
+   */
+  occupationalRisk: number;
+}
+
 /** Tax parameters for a given year. */
 export interface TaxParameters {
   year: number;
   /** Annual maximum contribution base (upper cap). */
   maxContributionBaseAnnual: number;
   contribution: ContributionRates;
+  /** Employer's contribution rates, used for the total employment cost. */
+  employerContribution: EmployerContributionRates;
   /** State income-tax scale (escala general estatal), same for everyone. */
   stateScale: Bracket[];
   /** Regional income-tax scales by community id (escala autonómica). */
@@ -112,6 +133,23 @@ export interface SocialSecurityBreakdown {
   total: number;
 }
 
+/** Employer contribution breakdown and total cost of the job. */
+export interface EmployerCostBreakdown {
+  contributionBase: number;
+  commonContingencies: number;
+  unemployment: number;
+  wageGuaranteeFund: number;
+  vocationalTraining: number;
+  mei: number;
+  occupationalRisk: number;
+  /** Sum of the employer's contributions. */
+  total: number;
+  /** Gross salary plus employer contributions: what the job costs. */
+  totalCost: number;
+  /** Employer contributions as a proportion of gross. */
+  overheadRate: number;
+}
+
 /** Income-tax calculation breakdown. */
 export interface IncomeTaxBreakdown {
   netIncomeBeforeReduction: number;
@@ -134,6 +172,7 @@ export interface Result {
   grossAnnual: number;
   grossMonthly: number;
   socialSecurity: SocialSecurityBreakdown;
+  employerCost: EmployerCostBreakdown;
   incomeTax: IncomeTaxBreakdown;
   netAnnual: number;
   netMonthly: number;

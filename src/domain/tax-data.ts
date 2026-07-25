@@ -23,6 +23,15 @@ const PARAMETERS_2025: TaxParameters = {
     vocationalTraining: 0.001, // 0.10%
     mei: 0.0013, // 0.13% (employee share in 2025)
   },
+  employerContribution: {
+    commonContingencies: 0.236, // 23.60%
+    unemploymentPermanent: 0.055, // 5.50%
+    unemploymentTemporary: 0.067, // 6.70%
+    wageGuaranteeFund: 0.002, // 0.20% (FOGASA)
+    vocationalTraining: 0.006, // 0.60%
+    mei: 0.0067, // 0.67% (employer share in 2025)
+    occupationalRisk: 0.015, // 1.50% estimate for service activities
+  },
   // Escala general estatal (art. 63 LIRPF): the state half, same for everyone.
   stateScale: [
     { upTo: 12450, rate: 0.095 },
@@ -67,10 +76,15 @@ const PARAMETERS_2025: TaxParameters = {
 const PARAMETERS_2026: TaxParameters = {
   ...PARAMETERS_2025,
   year: 2026,
-  // The employee MEI share rises 0.02 points each year until 2029.
+  // The MEI rises 0.10 points a year until 2029, split 1/6 employee, 5/6
+  // employer: 0.90% in 2026 = 0.15% + 0.75%.
   contribution: {
     ...PARAMETERS_2025.contribution,
     mei: 0.0015, // 0.15% in 2026
+  },
+  employerContribution: {
+    ...PARAMETERS_2025.employerContribution,
+    mei: 0.0075, // 0.75% in 2026
   },
 };
 
